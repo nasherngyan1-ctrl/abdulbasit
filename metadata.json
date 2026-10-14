@@ -1,0 +1,6 @@
+{
+  "name": "Abdulbasit Shwan",
+  "description": "Personal AI Assistant, Live Free-AI Radar, and Portfolio PDF Compiler for Abdulbasit Shwan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

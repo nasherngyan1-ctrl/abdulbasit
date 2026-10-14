@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Gold Ring -->
+    <path
+        android:pathData="M 54,24 A 30,30 0 1,0 54,84 A 30,30 0 1,0 54,24"
+        android:strokeWidth="2.5">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="24"
+                android:startY="24"
+                android:endX="84"
+                android:endY="84"
+                android:type="linear">
+                <item android:color="#FFF1B8" android:offset="0.0" />
+                <item android:color="#D4AF37" android:offset="0.5" />
+                <item android:color="#AA7C11" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Radar Sweep Beam -->
+    <path
+        android:pathData="M54,54 L75,33 A 30,30 0 0,0 54,24 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="54"
+                android:startY="54"
+                android:endX="70"
+                android:endY="30"
+                android:type="linear">
+                <item android:color="#66D4AF37" android:offset="0.0" />
+                <item android:color="#00D4AF37" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- AS Emblem / Central Luxury Diamond & Monogram -->
+    <path
+        android:pathData="M54,34 L69,54 L54,74 L39,54 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#E6D4AF37">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="39"
+                android:startY="34"
+                android:endX="69"
+                android:endY="74"
+                android:type="linear">
+                <item android:color="#33D4AF37" android:offset="0.0" />
+                <item android:color="#1A0A0A0A" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- AI Sparkle Core -->
+    <path
+        android:pathData="M54,44 L56.5,51.5 L64,54 L56.5,56.5 L54,64 L51.5,56.5 L44,54 L51.5,51.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="44"
+                android:startY="44"
+                android:endX="64"
+                android:endY="64"
+                android:type="linear">
+                <item android:color="#FFF7D6" android:offset="0.0" />
+                <item android:color="#D4AF37" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
