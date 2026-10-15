@@ -93,10 +93,26 @@ class GeminiClient {
             val responseBody = response.body?.string() ?: ""
 
             if (!response.isSuccessful) {
-                Log.e(TAG, "Gemini API failed: code=${response.code}, body=$responseBody")
-                return@withContext Result.failure(
-                    Exception("هەڵە لە وەڵامدانەوەی زیرەکی دەستکرد: ${response.code}\n$responseBody")
-                )
+                if (response.code == 429) {
+                    Log.w(TAG, "Gemini search or rate quota reached (429).")
+                    if (enableSearch) {
+                        Log.i(TAG, "Retrying generation without search grounding...")
+                        return@withContext generateContent(
+                            prompt = prompt,
+                            apiKey = apiKey,
+                            customSystemInstruction = customSystemInstruction,
+                            enableSearch = false
+                        )
+                    }
+                    val friendlyMessage = "سنووری داواکارییە بێبەرامبەرەکانی گووگڵ (Quota Exceeded 429) لەم دەقەیەدا پڕبووە. سیستەم بەردەوام دەبێت بە ئۆفەرە دۆزراوەکانی تر."
+                    return@withContext Result.failure(GeminiQuotaExceededException(friendlyMessage))
+                }
+                Log.w(TAG, "Gemini API response unsuccessful: code=${response.code}")
+                val friendlyMessage = when (response.code) {
+                    400, 401, 403 -> "کلیلی Gemini API نادروستە یان ماوەکەی بەسەرچووە. تکایە لە دوگمەی سەرەوە کلیلەکەت نوێ بکەرەوە."
+                    else -> "پەیوەندی لەگەڵ گووگڵ سەرکەوتوو نەبوو (کۆدی هەڵە: ${response.code})."
+                }
+                return@withContext Result.failure(Exception(friendlyMessage))
             }
 
             val respJson = JSONObject(responseBody)
@@ -127,7 +143,7 @@ class GeminiClient {
                 Result.success(finalResult)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Exception calling Gemini API", e)
+            Log.w(TAG, "Exception calling Gemini API: ${e.message}")
             Result.failure(e)
         }
     }
@@ -155,6 +171,12 @@ SUMMARY: [کورتەیەکی گشتی بە کوردی سۆرانی بۆ عەبد
             customSystemInstruction = SYSTEM_INSTRUCTION,
             enableSearch = true
         )
+
+        if (responseResult.isFailure) {
+            Log.w(TAG, "Live Gemini search failed or hit quota. Providing verified free fallback.")
+            val fallback = FallbackRadarTools.getNextFallbackTool()
+            return@withContext Result.success(fallback)
+        }
 
         responseResult.map { rawText ->
             parseFreeAiTool(rawText)
@@ -220,3 +242,5 @@ data class FreeAiToolResult(
     val directLink: String,
     val fullSummary: String
 )
+
+class GeminiQuotaExceededException(message: String) : Exception(message)

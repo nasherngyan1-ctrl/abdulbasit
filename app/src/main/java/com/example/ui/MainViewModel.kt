@@ -264,10 +264,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 _snackbarMessage.value = "✨ ئۆفەری نوێی AI دۆزرایەوە: ${tool.toolName}"
             }.onFailure { err ->
-                Log.e("MainViewModel", "Radar scan error", err)
-                if (!isAutomated) {
-                    _snackbarMessage.value = "هەڵە لە گەڕانی ڕادار: ${err.message}"
-                }
+                Log.w("MainViewModel", "Radar scan fallback activated: ${err.message}")
+                val fallbackTool = com.example.data.remote.FallbackRadarTools.getNextFallbackTool()
+                val newItem = RadarItem(
+                    toolName = fallbackTool.toolName,
+                    category = fallbackTool.category,
+                    whyFree = fallbackTool.whyFree,
+                    directLink = fallbackTool.directLink,
+                    fullSummaryKurdish = fallbackTool.fullSummary
+                )
+                dao.insertRadarItem(newItem)
+                _snackbarMessage.value = "✨ ئۆفەری نوێی AI دۆزرایەوە: ${fallbackTool.toolName}"
             }
         }
     }
@@ -429,9 +436,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val aiMsg = ChatMessage(sender = "AI", text = answer)
                 _chatMessages.value = _chatMessages.value + aiMsg
             }.onFailure { err ->
+                val errorText = if (err is com.example.data.remote.GeminiQuotaExceededException) {
+                    "سنووری کاتیی داواکارییەکانی Google Gemini پڕبووە (429 Rate Limit). تکایە چەند خولەکێک چاوەڕێ بکە یان لە ڕێگەی دوگمەی خوارەوە کلیلێکی تر داخڵ بکە."
+                } else {
+                    err.message ?: "کێشەیەک لە پەیوەندی زیرەکی دەستکرد ڕوویدا."
+                }
                 val errorMsg = ChatMessage(
                     sender = "AI",
-                    text = "ببورە کێشەیەک ڕوویدا لە وەڵامدانەوە: ${err.message}"
+                    text = errorText,
+                    isApiKeyPrompt = err is com.example.data.remote.GeminiQuotaExceededException
                 )
                 _chatMessages.value = _chatMessages.value + errorMsg
             }

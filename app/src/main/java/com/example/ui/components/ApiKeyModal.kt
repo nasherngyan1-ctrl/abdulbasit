@@ -33,6 +33,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -62,6 +65,7 @@ fun ApiKeyModal(
     onSaveKey: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
     var keyInput by remember { mutableStateOf(currentCustomKey) }
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -162,6 +166,32 @@ fun ApiKeyModal(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("api_key_input_field")
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://aistudio.google.com/app/apikey")).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GoldLight),
+                    border = androidx.compose.foundation.BorderStroke(0.8.dp, GoldPrimary),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("🌐 وەرگرتنی کلیلی نوێ لە Google AI Studio", fontSize = 11.5.sp)
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "ئەگەر کلیلەکەت سنووری 429 پڕبووە، دەتوانیت لە ڕێگەی ئەم دوگمەیە کلیلێکی نوێ و بێبەرامبەر دروستبکەیت.",
+                    color = TextMuted,
+                    fontSize = 10.5.sp,
+                    lineHeight = 15.sp
                 )
             }
         },
